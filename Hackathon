@@ -58,11 +58,6 @@ void Speedlimit()
   delay(2000);
   flag=1;
  }
-
-    //velo=(int)v;//BYTE TO INT
- //}
-
-
   Serial.println("Peg End?(1(YES)/0(NO))");
   while(!Serial.available());
  f=Serial.parseInt();
