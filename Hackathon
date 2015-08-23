@@ -1,0 +1,208 @@
+void setup()
+{
+pinMode(13,OUTPUT);//to peg
+pinMode(12,OUTPUT);//to speed
+pinMode(11,INPUT);//from peg
+pinMode(10,INPUT);//from speed
+pinMode(9,INPUT);//from vehicle
+pinMode(8,OUTPUT);//to vehicle
+pinMode(7,OUTPUT);//to infrastructure
+Serial.begin(9600);
+Serial.println("Start");
+}
+static int vid[32];
+static int pegflag=0;
+static int count=0;
+static int v[8];
+static int velo=0;
+static int curvel;
+static int fcount=0;
+static int f=0;
+static int flag=0;
+static int temvel;
+String velocity;
+static int i;
+void Emergency()
+{
+  Serial.println("Listening for Emergency Signal 1010");
+  while(!Serial.available());
+  int temp=Serial.parseInt();
+  if(temp==1010)
+  digitalWrite(13,HIGH);
+  delay(2000);
+  digitalWrite(13,LOW);
+}
+void Ping()
+{
+  for(i=0;i<3;i++)
+  vid[i]=0;//READ VEHICLE TYPE HEADER
+  Serial.print("Vehicle ID: ");
+  for(i=4;i<32;i++)
+  {
+    vid[i]=(i%2);//READ VEHICLE TYPE DATA
+    Serial.print((String)vid[i]);
+  }
+}
+void Speedlimit()
+{ Serial.println("Speed Limiter V 1.0.0.0");
+  Serial.println("Enter Speed Limit");
+  while((!Serial.available())&&(flag==0))//SENSE PEG
+ {
+ };
+
+ /*************************************PEG=1**********************************/
+ if(flag==0)
+ {
+  velo=Serial.parseInt();//READ SPEED LIMIT BYTE
+  Serial.println("PEG READY "+(String)velo);
+  delay(2000);
+  flag=1;
+ }
+
+    //velo=(int)v;//BYTE TO INT
+ //}
+
+
+  Serial.println("Peg End?(1(YES)/0(NO))");
+  while(!Serial.available());
+ f=Serial.parseInt();
+ switch(f)
+ {
+  case 1:flag=0;
+  break;
+  default:flag=1;
+ }
+ Serial.println("Enter Speedometer Reading");
+ while((!Serial.available())&&(flag==1))
+  {
+  };
+  curvel=Serial.parseInt();//READ VELOCITY FROM SPEEDOMETER
+ Serial.println("VELO READY "+(String)curvel);
+ delay(1000); 
+ if((curvel>velo)&&(flag==1))//VELO VIOLO AND IN ZONE
+ {
+  digitalWrite(13,HIGH);//OPEN CIRCUIT
+  Serial.println("VELOCITY VIOLATED");
+ delay(1000);
+ }
+ else if((curvel<=velo)&&(flag==1))//VELO NORMO OUT ZONE
+ {
+ digitalWrite(13,LOW);//CLOSE CIRCUIT
+ Serial.println("VELOCITY NORMAL");
+ delay(1000);
+ }
+}
+void Hazard()
+{   
+   int sw=digitalRead(9);
+   if(sw==1)
+  {
+    digitalWrite(8,HIGH);
+    digitalWrite(8,LOW);
+    digitalWrite(8,HIGH);
+    digitalWrite(8,LOW);
+    digitalWrite(8,HIGH);
+    digitalWrite(8,LOW);
+    digitalWrite(8,HIGH);
+    digitalWrite(8,LOW);
+  }
+  else
+  while(!Serial.available());
+    long int temp;
+    temp=Serial.parseInt();
+    if(temp==11111111)
+   {
+    digitalWrite(13,HIGH);
+    delay(1000);
+    digitalWrite(13,LOW);
+    delay(1000);
+    digitalWrite(13,HIGH);
+    delay(1000);
+    digitalWrite(13,LOW);
+    delay(1000);
+    digitalWrite(13,HIGH);
+    delay(1000);
+    digitalWrite(13,LOW);
+    delay(1000);
+    digitalWrite(13,HIGH);
+    delay(1000);
+    digitalWrite(13,LOW);
+    }
+  
+}
+
+void Peg()
+{
+ digitalWrite(13,LOW);
+ delay(500);
+ digitalWrite(13,LOW);
+ delay(500);
+ digitalWrite(13,HIGH);
+  delay(500);
+ digitalWrite(13,LOW);
+  delay(500);
+ digitalWrite(13,HIGH);
+  delay(500);
+ digitalWrite(13,LOW);
+  delay(500);
+ digitalWrite(13,LOW);
+  delay(500);
+ digitalWrite(13,LOW);
+  delay(500);
+}
+  
+  
+
+void loop() 
+{
+digitalWrite(12,HIGH);
+Serial.println("");
+Serial.println("Choose Platform");
+Serial.println("1.Vehicle");
+Serial.println("2.PEG");
+int cho;
+while(!Serial.available());
+cho=Serial.parseInt();
+switch(cho)
+{
+  case 1: Serial.println("1.PING PROCESSOR");
+          delay(500);
+          Serial.println("2.SPEED REGULATOR");
+          delay(500);
+          Serial.println("3.HAZARD");
+          int ch;
+          while(!Serial.available());
+          ch=Serial.parseInt();
+          switch(ch)
+          {
+            case 1:Ping();
+            break;
+            case 2: do
+                    {
+                    Speedlimit();
+                    }while(flag==1);
+            break;
+            case 3:Hazard();
+            break;
+            default:Serial.println("Please enter valid input");
+          }
+          break;
+          case 2:Serial.println("1.PEG PING");
+                  delay(500);
+                  Serial.println("2.SCAN TRAFFIC");
+                  delay(500);
+                  int choi;
+                  while(!Serial.available());
+                  choi=Serial.parseInt();
+                  switch(choi)
+                  {
+                    case 1: Peg();
+                    break;
+                    case 2: Emergency();
+                    break;
+                    default:Serial.println("Please enter a valid input");
+                  }
+                  break;
+                  default:Serial.println("Please input a valid option");
+}
+}
