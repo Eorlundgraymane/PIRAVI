@@ -54,11 +54,11 @@ void Speedlimit()
  if(flag==0)
  {
   velo=Serial.parseInt();//READ SPEED LIMIT BYTE
-  Serial.println("PEG READY "+(String)velo);
+  Serial.println("REGION VELOCITY "+(String)velo);
   delay(2000);
   flag=1;
  }
-  Serial.println("Peg End?(1(YES)/0(NO))");
+  Serial.println("Peg End?(1(YES)/0(NO))");//ENCOUNTERING SECOND PEG
   while(!Serial.available());
  f=Serial.parseInt();
  switch(f)
@@ -72,7 +72,7 @@ void Speedlimit()
   {
   };
   curvel=Serial.parseInt();//READ VELOCITY FROM SPEEDOMETER
- Serial.println("VELO READY "+(String)curvel);
+ Serial.println("CURRENT VELOCITY "+(String)curvel);
  delay(1000); 
  if((curvel>velo)&&(flag==1))//VELO VIOLO AND IN ZONE
  {
@@ -89,6 +89,7 @@ void Speedlimit()
 }
 void Hazard()
 {   
+   Serial.println("Switch not on waiting for Hazard signal 11111111");
    int sw=digitalRead(9);
    if(sw==1)
   {
